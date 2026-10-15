@@ -9,6 +9,14 @@ public class Lyrics.LocalRepository : IRepository, Object {
         }
 
         var file = File.new_for_path (local_storage+get_filename_for_song (song));
+
+        //  Remote lyrics may already be downloaded to the same location
+        var local_file = lyric_file as LocalFile;
+        if (local_file != null && local_file.get_file ().equal (file)) {
+            debug (@"Lyric already stored at $(file.get_path ())");
+            return true;
+        }
+
         message (@"Saving file to $(file.get_path ())");
         try {
             var os = new DataOutputStream (file.replace (null, false, FileCreateFlags.REPLACE_DESTINATION));

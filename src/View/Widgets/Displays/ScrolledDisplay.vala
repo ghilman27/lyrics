@@ -56,13 +56,13 @@ public class Lyrics.ScrolledDisplay : Gtk.ScrolledWindow, IDisplay {
         remove_source ();
 
         //  Start transition
-        if (lyric != null) {
+        if (lyric != null && !lyric.is_empty) {
             transition_to (labels[lyric.get_next_lyric_timestamp (start_time).to_string ()]);
         }
 
         current_source_id = Timeout.add (250, () => {
             var elapsed = get_monotonic_time () - time;
-            if (lyric != null) {
+            if (lyric != null && !lyric.is_empty) {
                 var label = labels[lyric.get_next_lyric_timestamp (start_time + elapsed).to_string ()];
                 transition_to (label);
             }

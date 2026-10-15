@@ -17,12 +17,17 @@ public class Lyrics.LocalFile : Lyrics.ILyricFile, Object {
             string str;
             while ((str = is.read_line ()) != null) {
                 builder.append (str);
+                builder.append_c ('\n');
             }
         } catch (Error e) {
             warning (e.message);
         }
 
         return builder.str;
+    }
+
+    public File get_file () {
+        return file;
     }
 
     public Lyrics.Lyric to_lyric () {

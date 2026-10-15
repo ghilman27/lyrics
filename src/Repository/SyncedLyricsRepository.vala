@@ -9,11 +9,11 @@ public class Lyrics.SyncedLyricsRepository : Lyrics.IRepository, Object {
 
         var search_terms = new StringBuilder ();
         search_terms
-        .append(song.title)
+        .append(song.title ?? "")
         .append(" ")
-        .append(song.artist)
+        .append(song.artist ?? "")
         .append(" ")
-        .append(song.album);
+        .append(song.album ?? "");
         debug (@"Searching for $(search_terms.str)");
 
         var file = shim.search (search_terms.str, song.filename);

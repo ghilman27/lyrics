@@ -23,7 +23,14 @@ public class Parser.LyricContentParser : ChainOfResponsability {
     void parse_time (string time, out int minutes, out int seconds, out int milli) {
         minutes = int.parse (time [1:3]);
         seconds = int.parse (time [4:6]);
-        milli = !(lyric_formatter.is_simplified_lrc (time)) ? int.parse (time [7:9]) : 0;
+        milli = 0;
+
+        if (!lyric_formatter.is_simplified_lrc (time)) {
+            //  Strip "[mm:ss." and "]", leaving 2 (hundredths) or 3 (milliseconds) digits
+            var fraction = time [7:time.length - 1];
+            milli = int.parse (fraction);
+            if (fraction.length == 2) milli *= 10;
+        }
     }
 
     // @return time in microseconds(µs)

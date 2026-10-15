@@ -14,13 +14,14 @@ public class Parser.LRC : Object {
         lyric = new Lyrics.Lyric ();
         try {
             DataInputStream dis = new DataInputStream (file.read ());
-            string ln;
-            size_t length;
+            string? ln;
 
-            while ((ln = dis.read_upto ("[", -1, out length)) != null) {
-                debug ("Parsing line: " + ln);
-                parse_chain.parse (lyric, "[" + ln.strip ());
-                dis.read_byte ();
+            //  read_until consumes the "[" so there is no read_byte () past the end of the file
+            while ((ln = dis.read_until ("[", null)) != null) {
+                if ((ln = ln.strip ()) != "") {
+                    debug ("Parsing line: [" + ln);
+                    parse_chain.parse (lyric, "[" + ln);
+                }
             }
         } catch (Error e) {
             warning (e.message);

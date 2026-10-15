@@ -10,12 +10,13 @@ public class Lyrics.Lyric : Gee.TreeMap<int64?, string> {
     int offset = 0;
 
     public Lyric () {
-        GLib.CompareDataFunc<int64?> compare_fn = ((a, b) => {
-            if (a - b == 0) return 0;
-            return (a - b > 0) ? 1 : -1;
-        });
+        base (compare_timestamps, Gee.Functions.get_equal_func_for (GLib.Type.STRING));
+    }
 
-        base (compare_fn, Gee.Functions.get_equal_func_for (GLib.Type.STRING));
+    //  Static so base () doesn't capture `this` before it exists
+    static int compare_timestamps (int64? a, int64? b) {
+        if (a - b == 0) return 0;
+        return (a - b > 0) ? 1 : -1;
     }
 
     public void add_metadata (string _tag, string _info) {
@@ -54,11 +55,15 @@ public class Lyrics.Lyric : Gee.TreeMap<int64?, string> {
             get_iterator ().first ();
         }
 
-        while (get_iterator ().get_key () < time_in_us && get_iterator ().has_next ()) {
+        //  Advance to the last timestamp that is <= time_in_us
+        while (get_iterator ().has_next ()) {
             get_iterator ().next ();
-        }
 
-        if (get_iterator ().has_previous ()) get_iterator ().previous ();
+            if (get_iterator ().get_key () > time_in_us) {
+                get_iterator ().previous ();
+                break;
+            }
+        }
 
         return get_iterator ();
     }
