@@ -81,11 +81,15 @@ public class Lyrics.Lyric : Object {
             iterator.first ();
         }
 
-        while (iterator.get_key () < time_in_us && iterator.has_next ()) {
+        //  Advance to the last timestamp that is <= time_in_us
+        while (iterator.has_next ()) {
             iterator.next ();
-        }
 
-        if (iterator.has_previous ()) iterator.previous ();
+            if (iterator.get_key () > time_in_us) {
+                iterator.previous ();
+                break;
+            }
+        }
 
         return iterator;
     }

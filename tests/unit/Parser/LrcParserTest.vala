@@ -15,6 +15,7 @@ public class Unit.Parser.LrcParserTest : Unit.TestCase {
         register ("/test_can_parse_empty_lrc_file", test_can_parse_empty_lrc_file);
         register ("/test_can_parse_lrc_file", test_can_parse_lrc_file);
         register ("/test_can_parse_lrc_file_without_line_endings", test_can_parse_lrc_file_without_line_endings);
+        register ("/test_can_parse_lrc_file_with_millisecond_timestamps", test_can_parse_lrc_file_with_millisecond_timestamps);
     }
 
     void test_can_instantiate_parser() {
@@ -157,6 +158,71 @@ public class Unit.Parser.LrcParserTest : Unit.TestCase {
             lrc.get_current_line (2 * one_minute_in_us),
             GLib.CompareOperator.EQ,
             "Hoping for a glimpse of your light"
+        );
+    }
+
+    void test_can_parse_lrc_file_with_millisecond_timestamps() {
+        GLib.FileIOStream iostream = null;
+        Lyric? lrc = null;
+
+        try {
+            var file = GLib.File.new_tmp ("test-XXXXXX.lrc", out iostream);
+
+            string data = """[00:00.000] 作词 : tuki.
+[00:15.149]忘れられない日に
+[00:17.983]今日がいつかなるよ
+[00:41.523]
+[01:05.242]君のまま　泣いたって笑ったって
+[01:07.85]怒ったって
+""";
+
+            iostream.output_stream.write (data.data);
+
+            var parser = new LrcParser();
+            lrc = parser.parse_file (file);
+            assert_nonnull (lrc);
+        } catch (GLib.Error e) {
+            Test.fail ();
+            GLib.warning ("Erro de E/S: %s", e.message);
+        }
+
+        assert_cmpint (
+            lrc.size,
+            GLib.CompareOperator.EQ,
+            5
+        );
+
+        //  3 digit fraction is milliseconds: [00:17.983] = 17.983s
+        assert_cmpstr (
+            lrc.get_current_line (17983 * 1000),
+            GLib.CompareOperator.EQ,
+            "今日がいつかなるよ"
+        );
+
+        assert_cmpstr (
+            lrc.get_current_line (17982 * 1000),
+            GLib.CompareOperator.EQ,
+            "忘れられない日に"
+        );
+
+        //  2 digit fraction is hundredths of a second: [01:07.85] = 67.850s
+        assert_cmpstr (
+            lrc.get_current_line (67850 * 1000),
+            GLib.CompareOperator.EQ,
+            "怒ったって"
+        );
+
+        assert_cmpstr (
+            lrc.get_current_line (67849 * 1000),
+            GLib.CompareOperator.EQ,
+            "君のまま　泣いたって笑ったって"
+        );
+
+        //  last line stays current after its timestamp
+        assert_cmpstr (
+            lrc.get_current_line (5 * 60 * 1000 * 1000),
+            GLib.CompareOperator.EQ,
+            "怒ったって"
         );
     }
 }

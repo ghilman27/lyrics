@@ -1,6 +1,7 @@
 public class Parser.LyricFormatter : Object {
     const string SIMPLIFIED_LYRIC_PATTERN = "(\\[\\d\\d:\\d\\d\\])";
-    const string LYRIC_PATTERN = "(\\[\\d\\d:\\d\\d\\.\\d\\d\\])";
+    //  Fraction can be hundredths [mm:ss.xx] or milliseconds [mm:ss.xxx]
+    const string LYRIC_PATTERN = "(\\[\\d\\d:\\d\\d\\.\\d{2,3}\\])";
 
     public bool is_timestamp (string ln) {
         return is_simplified_lrc (ln) || is_lrc (ln);
@@ -16,7 +17,7 @@ public class Parser.LyricFormatter : Object {
 
     public string remove_word_timing (string text) {
         try {
-            var regex = new GLib.Regex ("\\<\\d\\d:\\d\\d.\\d\\d\\>");
+            var regex = new GLib.Regex ("\\<\\d\\d:\\d\\d\\.\\d{2,3}\\>");
             return regex.replace (text, -1, 0, "");
         } catch (Error e) {
             warning (e.message);
