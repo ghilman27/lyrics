@@ -40,7 +40,7 @@ public class SyncedLyrics.Shim : Object {
 
         try {
             Process.spawn_command_line_sync (
-                @"$(Lyrics.Application.DEFAULT_LYRICS_DIR).venv/bin/syncedlyrics -o \"$(path)\" \"$(search_terms)\"",
+                @"syncedlyrics -o \"$(path)\" \"$(search_terms)\"",
                 out stdout,
                 out stderr,
                 out status

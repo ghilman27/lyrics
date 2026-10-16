@@ -28,8 +28,6 @@ executable(
     asresources,
     sources,
     dependencies: deps,
-    c_args: ['-fprofile-arcs', '-ftest-coverage', '-fprofile-abs-path'],
-    link_args: ['-fprofile-arcs', '-ftest-coverage', '-fprofile-abs-path'],
     install: true
 )
 

@@ -1,6 +1,6 @@
 
 public class Lyrics.Application : Gtk.Application {
-    public static string DEFAULT_LYRICS_DIR = Environment.get_home_dir ()+"/.lyrics/";
+    public static string DEFAULT_LYRICS_DIR = Environment.get_user_data_dir () + "/lyrics/";
     public static GLib.Settings settings = new Settings ("com.github.naaando.lyrics");
     public LyricsService lyrics_service { get; set; }
 
@@ -56,9 +56,6 @@ public class Lyrics.Application : Gtk.Application {
     }
 
     private void setup_services () {
-        var syncedLyrics = new SyncedLyrics.Shim();
-        syncedLyrics.install();
-
         var repository = new Repository ();
         lyrics_service = new LyricsService (repository);
         players = new Players ();

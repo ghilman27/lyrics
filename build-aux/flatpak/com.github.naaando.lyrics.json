@@ -1,0 +1,64 @@
+{
+    "app-id": "com.github.naaando.lyrics",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "25.08",
+    "sdk": "org.freedesktop.Sdk",
+    "sdk-extensions": [
+        "org.freedesktop.Sdk.Extension.vala"
+    ],
+    "build-options": {
+        "prepend-path": "/usr/lib/sdk/vala/bin",
+        "prepend-ld-library-path": "/usr/lib/sdk/vala/lib"
+    },
+    "command": "com.github.naaando.lyrics",
+    "finish-args": [
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--share=ipc",
+        "--share=network",
+        "--talk-name=org.mpris.MediaPlayer2.*",
+        "--metadata=X-DConf=migrate-path=/com/github/naaando/lyrics/"
+    ],
+    "cleanup": [
+        "/bin/normalizer",
+        "/include",
+        "/lib/girepository-1.0",
+        "/lib/pkgconfig",
+        "/share/gir-1.0",
+        "/share/vala",
+        "*.la",
+        "*.a"
+    ],
+    "modules": [
+        "pypi-dependencies.json",
+        {
+            "name": "libgee",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/libgee/0.20/libgee-0.20.8.tar.xz",
+                    "sha256": "189815ac143d89867193b0c52b7dc31f3aa108a15f04d6b5dca2b6adfad0b0ee",
+                    "x-checker-data": {
+                        "type": "gnome",
+                        "name": "libgee",
+                        "stable-only": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "lyrics",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dbuildtype=release"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ghilman27/lyrics.git",
+                    "branch": "flatpak"
+                }
+            ]
+        }
+    ]
+}
