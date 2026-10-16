@@ -22,8 +22,6 @@ executable(
         dependency ('glib-2.0'),
         dependency ('gtk+-3.0'),
         dependency ('gee-0.8'),
-        dependency ('libsoup-2.4'),
-        dependency ('xmlbird'),
     ],
     install: true
 )
